@@ -4,6 +4,9 @@ from langchain.agents import Tool
 from langchain.chat_models.base import BaseChatModel
 from langchain.memory.chat_memory import BaseChatMemory
 
+from config import db_dependency
+from models import MessageHistory
+
 
 class ChatBotBase():
     llm: BaseChatModel = None
@@ -13,7 +16,8 @@ class ChatBotBase():
     def __init__(self):
         pass
 
-    def load_memory():
+    def load_memory(self, user_id: int, db: db_dependency):
+        # self.memory = MessageHistory(user_id, )
         pass
 
     def ask(self, message: str) -> str:

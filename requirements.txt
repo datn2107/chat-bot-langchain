@@ -2,3 +2,10 @@ langchain
 python-dotenv
 openai
 google-api-core
+uvicorn
+fastapi
+dnspython
+alembic
+pymysql
+cryptography
+pyjwt
