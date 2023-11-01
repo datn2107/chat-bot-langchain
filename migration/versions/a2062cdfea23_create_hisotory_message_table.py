@@ -1,8 +1,8 @@
 """Create hisotory message table
 
-Revision ID: 6523d9326d39
+Revision ID: a2062cdfea23
 Revises: 
-Create Date: 2023-11-02 00:00:35.023922
+Create Date: 2023-11-02 01:50:25.905496
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6523d9326d39'
+revision: str = 'a2062cdfea23'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.create_table('message_history',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_email', sa.String(length=50), nullable=False),
-    sa.Column('message', sa.String(length=5000), nullable=False),
+    sa.Column('content', sa.String(length=5000), nullable=False),
     sa.Column('message_type', sa.String(length=10), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),

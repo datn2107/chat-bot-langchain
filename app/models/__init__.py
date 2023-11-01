@@ -1,2 +1,2 @@
 from .base import Base
-from .messge_history import MessageHistory
+from .messge_history import MessageHistory, MessageType

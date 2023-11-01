@@ -1,16 +1,17 @@
 import os
 import jwt
 import logging
+from typing import Tuple
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.internal.token_handler import is_valid_token, is_valid_email
-from app.internal.token_handler import EMAIL_KEY
+from app.internal.token_handler import EMAIL_KEY, USER_TYPE_KEY
 
 security = HTTPBearer()
 
-async def get_current_email(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+async def get_current_email_type(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Tuple[str, str]:
     token = credentials.credentials
     logging.info(
         "Token: {token}"
@@ -31,7 +32,7 @@ async def get_current_email(credentials: HTTPAuthorizationCredentials = Depends(
             detail="Could not find email",
         )
 
-    return payload[EMAIL_KEY]
+    return payload[EMAIL_KEY], payload[USER_TYPE_KEY]
 
 
-jwt_dependency = Depends(get_current_email)
+jwt_dependency = Depends(get_current_email_type)

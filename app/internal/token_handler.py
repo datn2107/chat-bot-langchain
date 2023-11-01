@@ -35,7 +35,7 @@ def generate_external_server_token() -> str:
     return token
 
 
-def is_valid_email(email: str) -> Union[bool, Exception]:
+def get_user_by_email(email: str) -> Union[dict, Exception]:
     url = os.getenv(
         "EXTERNAL_SERVER_URL"
     ) + "/api/Customer/GetByEmail?email={email}".format(email=quote_plus(email))
@@ -53,10 +53,16 @@ def is_valid_email(email: str) -> Union[bool, Exception]:
                 ),
             )
         )
-        return False
+        return None
+
+    return response.json()
+
+
+def is_valid_email(email: str) -> Union[bool, Exception]:
+    response = get_user_by_email(email)
 
     try:
-        response_email = response.json()["accountTypeById"]["result"]["email"]
+        response_email = response["accountTypeById"]["result"]["email"]
     except Exception as e:
         logging.info(
             EMAIL_VERIFY_LOGGING.format(
