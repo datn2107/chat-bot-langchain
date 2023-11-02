@@ -12,7 +12,7 @@ from config import db_dependency
 from models import MessageHistory
 from chat_bot import ChatBotFactory
 from dependencies import jwt_dependency
-from internal.message_history_repository import count_message_last_3_hours
+from internal.message_history_repository import count_message_last_k_hours
 
 logging.basicConfig(filename="app.log", filemode="a", level=logging.DEBUG)
 app = FastAPI()
@@ -54,16 +54,26 @@ async def ask_message(
 ):
     user_email, user_type = user_email_type
 
-    number_of_messages = count_message_last_3_hours(user_email)
+    if user_type not in ["Free", "Standard", "Premium"]:
+        raise HTTPException(
+            status_code=400, detail="Error token: User type must be Free, Standard or Premium"
+        )
+
+    number_of_messages = count_message_last_k_hours(user_email, k=3)
     if user_type == "Free" and number_of_messages >= 20:
         raise HTTPException(
             status_code=429,
             detail="You have reached the limit of 20 messages per 3 hours",
         )
-    if user_type == "Premium" and number_of_messages >= 100:
+    if user_type == "Standard" and number_of_messages >= 100:
         raise HTTPException(
             status_code=429,
             detail="You have reached the limit of 100 messages per 3 hours",
+        )
+    if user_type == "Premium" and number_of_messages >= 200:
+        raise HTTPException(
+            status_code=429,
+            detail="You have reached the limit of 200 messages per 3 hours",
         )
 
     try:

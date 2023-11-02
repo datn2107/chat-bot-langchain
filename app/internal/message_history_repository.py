@@ -57,7 +57,7 @@ def add_message(
         return None
 
 
-def count_message_last_3_hours(user_email: str) -> int:
+def count_message_last_k_hours(user_email: str, k: int = 3) -> int:
     try:
         db_session = open_db_session()
         count = (
@@ -89,6 +89,6 @@ if __name__ == "__main__":
     load_dotenv()
 
     print(add_message(user_mail="khoa@gmail.com", content="Hello", message_type="AI"))
-    
+
     messages = get_last_10_messages("khoa@gmail.com")
     print(messages)
