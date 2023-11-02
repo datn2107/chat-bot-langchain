@@ -8,7 +8,7 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.memory.chat_memory import BaseChatMemory
 
-from repository import message_history
+from repository import messages_history_repository
 from models import MessageType
 
 
@@ -43,7 +43,7 @@ class ChatBotBase:
     def load_memory(self, user_email: str):
         self.memory.clear()
 
-        messages = message_history.get_last_k_messages(user_email, k=10)
+        messages = messages_history_repository.get_last_k_messages(user_email, k=10)
         for message in messages:
             if message.message_type == MessageType.HUMAN.value:
                 self.memory.chat_memory.add_user_message(message.content)
@@ -51,11 +51,11 @@ class ChatBotBase:
                 self.memory.chat_memory.add_ai_message(message.content)
 
     async def ask(self, user_email: str, message: str) -> str:
-        message_history.add_message(
+        messages_history_repository.add_message(
            user_email, message, MessageType.HUMAN.value
         )
         response = await self.agent_chain.arun(message)
-        message_history.add_message(
+        messages_history_repository.add_message(
             user_email, response, MessageType.AI.value
         )
 

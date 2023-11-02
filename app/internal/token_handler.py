@@ -21,7 +21,7 @@ def generate_external_server_token() -> str:
             NAME_KEY: os.getenv("EXTERNAL_SERVER_NAME"),
             EMAIL_KEY: os.getenv("EXTERNAL_SERVER_EMAIL"),
             ROLE_KEY: "Admin",
-            USER_TYPE_KEY: "Free",
+            USER_TYPE_KEY: os.getenv("EXTERNAL_SERVER_ACCOUNT_TYPE"),
             "StartDate": "1/1/0001 12:00:00 AM",
             "EndDate": "1/1/0001 12:00:00 AM",
             "exp": datetime.datetime.utcnow()

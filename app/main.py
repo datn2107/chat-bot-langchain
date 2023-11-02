@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 from models import MessageHistory
 from chat_bot import ChatBotFactory
 from dependencies import jwt_dependency
-from repository import message_history
+from repository import messages_history_repository
 
 logging.basicConfig(filename="app.log", filemode="a", level=logging.DEBUG)
 app = FastAPI()
@@ -24,7 +24,7 @@ async def get_message(
     limit: int = 10,
 ):
     try:
-        messages = message_history.get_messages(user_email_type[0], skip, limit)
+        messages = messages_history_repository.get_messages(user_email_type[0], skip, limit)
     except Exception as e:
         logging.debug(
             "Get Messages {email}: {exception}".format(
@@ -50,7 +50,7 @@ async def ask_message(
             status_code=400, detail="Error token: User type must be Free, Standard or Premium"
         )
 
-    number_of_messages = message_history.count_message_last_k_hours(user_email, k=3)
+    number_of_messages = messages_history_repository.count_message_last_k_hours(user_email, k=3)
     if user_type == "Free" and number_of_messages >= 20:
         raise HTTPException(
             status_code=429,
