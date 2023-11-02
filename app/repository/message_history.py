@@ -10,12 +10,15 @@ from config import db
 class MessageHistoryRepository:
     db_session: Session = None
 
+
     def __init__(self):
         self.db_session = self.open_db_session()
+
 
     def open_db_session(self):
         db_session = next(db.get_db_session())
         return db_session
+
 
     def get_messages(
         self, user_email: str, skip: int = 0, limit: int = 10
@@ -39,6 +42,23 @@ class MessageHistoryRepository:
 
         return messages
 
+
+    def clear_messages(self, user_email: str):
+        try:
+            self.db_session.query(MessageHistory).filter(
+                MessageHistory.user_email == user_email
+            ).delete()
+            self.db_session.commit()
+        except Exception as e:
+            logging.debug(
+                "Clear Messages {email}: {exception}".format(
+                    email=user_email, exception=str(e)
+                )
+            )
+            self.db_session.rollback()
+            raise e
+
+
     def get_last_k_messages(
         self, user_email: str, k: int = 10
     ) -> Optional[List[MessageHistory]]:
@@ -59,6 +79,7 @@ class MessageHistoryRepository:
             raise e
 
         return messages
+
 
     def add_message(
         self, user_mail: str, content: str, message_type: MessageType
@@ -82,6 +103,7 @@ class MessageHistoryRepository:
             )
             self.db_session.rollback()
             raise e
+
 
     def count_message_last_k_hours(self, user_email: str, k: int = 3) -> int:
         try:

@@ -39,6 +39,21 @@ async def get_message(
     return messages
 
 
+@app.get("/message/clear", status_code=status.HTTP_200_OK)
+async def clear_message(user_email_type: Tuple[str, str] = jwt_dependency):
+    try:
+        messages_history_repository.clear_messages(user_email_type[0])
+    except Exception as e:
+        logging.debug(
+            "Clear Messages {email}: {exception}".format(
+                email=user_email_type[0], exception=str(e)
+            )
+        )
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+    return {"message": "Clear messages successfully"}
+
+
 @app.post("/message/ask", status_code=status.HTTP_200_OK)
 async def ask_message(
     message: str, user_email_type: Tuple[str, str] = jwt_dependency
