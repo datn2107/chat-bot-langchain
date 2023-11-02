@@ -5,14 +5,13 @@ import logging
 from typing import Tuple
 from fastapi import FastAPI, HTTPException, Depends, status
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 dotenv.load_dotenv()
 
-from config import db_dependency
 from models import MessageHistory
 from chat_bot import ChatBotFactory
 from dependencies import jwt_dependency
-from internal.message_history_repository import count_message_last_k_hours
+from repository import message_history
 
 logging.basicConfig(filename="app.log", filemode="a", level=logging.DEBUG)
 app = FastAPI()
@@ -20,22 +19,14 @@ app = FastAPI()
 
 @app.get("/message/get", status_code=status.HTTP_200_OK)
 async def get_message(
-    db: db_dependency,
     user_email_type: Tuple[str, str] = jwt_dependency,
     skip: int = 0,
     limit: int = 10,
 ):
     try:
-        messages = (
-            db.query(MessageHistory)
-            .filter(MessageHistory.user_email == user_email_type[0])
-            .order_by(MessageHistory.created_at.desc())
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
+        messages = message_history.get_messages(user_email_type[0], skip, limit)
     except Exception as e:
-        logging.info(
+        logging.debug(
             "Get Messages {email}: {exception}".format(
                 email=user_email_type[0], exception=str(e)
             )
@@ -50,7 +41,7 @@ async def get_message(
 
 @app.post("/message/ask", status_code=status.HTTP_200_OK)
 async def ask_message(
-    message: str, db: db_dependency, user_email_type: Tuple[str, str] = jwt_dependency
+    message: str, user_email_type: Tuple[str, str] = jwt_dependency
 ):
     user_email, user_type = user_email_type
 
@@ -59,7 +50,7 @@ async def ask_message(
             status_code=400, detail="Error token: User type must be Free, Standard or Premium"
         )
 
-    number_of_messages = count_message_last_k_hours(user_email, k=3)
+    number_of_messages = message_history.count_message_last_k_hours(user_email, k=3)
     if user_type == "Free" and number_of_messages >= 20:
         raise HTTPException(
             status_code=429,
@@ -81,7 +72,7 @@ async def ask_message(
         chat_bot.load_memory(user_email)
         response = await chat_bot.ask(user_email, message)
     except Exception as e:
-        logging.info(
+        logging.debug(
             "Ask Message {email}-{type}: {exception}".format(
                 email=user_email, type=user_type, exception=str(e)
             )

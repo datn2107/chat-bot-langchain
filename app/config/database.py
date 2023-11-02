@@ -12,7 +12,7 @@ class Database:
         self.session_maker = sessionmaker(bind=self.engine)
 
     def get_db_engine(self) -> Engine:
-        url = os.getenv('DB_URL')
+        url = os.getenv("DB_URL")
         self.engine = create_engine(url)
         return self.engine
 

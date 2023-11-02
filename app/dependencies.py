@@ -6,16 +6,13 @@ from typing import Tuple
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from app.internal.token_handler import is_valid_token, is_valid_email
-from app.internal.token_handler import EMAIL_KEY, USER_TYPE_KEY
+from internal.token_handler import is_valid_token, is_valid_email
+from internal.token_handler import EMAIL_KEY, USER_TYPE_KEY
 
 security = HTTPBearer()
 
 async def get_current_email_type(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Tuple[str, str]:
     token = credentials.credentials
-    logging.info(
-        "Token: {token}"
-    )
 
     if not is_valid_token(token):
         raise HTTPException(
@@ -25,7 +22,6 @@ async def get_current_email_type(credentials: HTTPAuthorizationCredentials = Dep
         )
 
     payload = jwt.decode(token, options={"verify_signature": False})
-    logging.info(payload)
     if not is_valid_email(payload[EMAIL_KEY]):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

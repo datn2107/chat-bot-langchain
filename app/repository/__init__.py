@@ -1,0 +1,3 @@
+from repository.message_history import MessageHistoryRepository
+
+messages_history_repository = MessageHistoryRepository()

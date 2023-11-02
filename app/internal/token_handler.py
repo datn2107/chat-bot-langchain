@@ -45,7 +45,7 @@ def get_user_by_email(email: str) -> Union[dict, Exception]:
     )
 
     if response.status_code != 200:
-        logging.info(
+        logging.debug(
             EMAIL_VERIFY_LOGGING.format(
                 email=email,
                 message="Response status {status} and message {message}".format(
@@ -64,7 +64,7 @@ def is_valid_email(email: str) -> Union[bool, Exception]:
     try:
         response_email = response["accountTypeById"]["result"]["email"]
     except Exception as e:
-        logging.info(
+        logging.debug(
             EMAIL_VERIFY_LOGGING.format(
                 email=email, message="Response JSON wrong format"
             )
@@ -72,7 +72,7 @@ def is_valid_email(email: str) -> Union[bool, Exception]:
         return False
 
     if response_email != email:
-        logging.info(
+        logging.debug(
             EMAIL_VERIFY_LOGGING.format(
                 email=email, message="Email not match with response"
             )
@@ -92,20 +92,20 @@ def is_valid_token(token: str) -> Union[bool, Exception]:
         )
 
         if EMAIL_KEY not in payload:
-            logging.info(
+            logging.debug(
                 TOKEN_VERIFY_LOGGING.format(token=token, message="No email in token")
             )
             return False
 
         return True
     except Exception as e:
-        logging.info(TOKEN_VERIFY_LOGGING.format(token=token, message=str(e)))
+        logging.debug(TOKEN_VERIFY_LOGGING.format(token=token, message=str(e)))
         return False
 
 
 def get_account_type(token: str) -> str:
     if not is_valid_token(token):
-        logging.info(
+        logging.debug(
             TOKEN_VERIFY_LOGGING.format(
                 token=token, message="Invalid Token ['function: get_account_type']"
             )
