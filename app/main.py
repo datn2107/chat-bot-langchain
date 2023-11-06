@@ -4,6 +4,7 @@ import dotenv
 import logging
 from typing import Tuple
 from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 dotenv.load_dotenv()
@@ -16,6 +17,15 @@ from repository import messages_history_repository
 logging.basicConfig(filename="app.log", filemode="a", level=logging.DEBUG)
 app = FastAPI()
 
+origins = os.getenv("ALLOWED_ORIGINS").split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/messages/get", status_code=status.HTTP_200_OK)
 async def get_message(
@@ -39,7 +49,7 @@ async def get_message(
     return messages
 
 
-@app.get("/messages/clear", status_code=status.HTTP_200_OK)
+@app.delete("/messages/clear", status_code=status.HTTP_200_OK)
 async def clear_message(user_email_type: Tuple[str, str] = jwt_dependency):
     try:
         messages_history_repository.clear_messages(user_email_type[0])
@@ -54,7 +64,7 @@ async def clear_message(user_email_type: Tuple[str, str] = jwt_dependency):
     return {"message": "Clear messages successfully"}
 
 
-@app.post("/messages/ask", status_code=status.HTTP_200_OK)
+@app.get("/messages/ask", status_code=status.HTTP_200_OK)
 async def ask_message(
     message: str, user_email_type: Tuple[str, str] = jwt_dependency
 ):

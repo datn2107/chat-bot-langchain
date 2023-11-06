@@ -39,10 +39,20 @@ def get_user_by_email(email: str) -> Union[dict, Exception]:
     url = os.getenv(
         "EXTERNAL_SERVER_URL"
     ) + "/api/Customer/GetByEmail?email={email}".format(email=quote_plus(email))
-    response = requests.get(
-        url,
-        headers={"Authorization": "Bearer " + generate_external_server_token()},
-    )
+    try:
+        response = requests.get(
+            url,
+            headers={"Authorization": "Bearer " + generate_external_server_token()},
+        )
+    except Exception as e:
+        logging.debug(
+            EMAIL_VERIFY_LOGGING.format(
+                email=email,
+                message="Call API to external server error: {message}".format(
+                    message=response
+                ),
+            )
+        )
 
     if response.status_code != 200:
         logging.debug(
