@@ -6,8 +6,8 @@ import datetime
 from urllib.parse import quote_plus
 from typing import Union
 
-EMAIL_KEY = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
 NAME_KEY = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+EMAIL_KEY = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
 ROLE_KEY = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
 USER_TYPE_KEY = "AccountType"
 
