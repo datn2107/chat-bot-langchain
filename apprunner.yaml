@@ -8,11 +8,10 @@ build:
       - pip install -r requirements.txt -t .
       - echo $ENV-PASS | gpg --batch --passphrase-fd 0 --output .env --decrypt .env.gpg
       - alembic upgrade head
-  secrets:
+  env:
     - name: ENV-PASS
       value-from: arn:aws:secretsmanager:ap-southeast-1:390229387745:secret:prod/protracking/envpass-DkFL5Q
 run:
-  command:
-    - cd app && uvicorn main:app --host 0.0.0.0 --port 8080
+  command: cd app && uvicorn main:app --host 0.0.0.0 --port 8080
   network:
     port: 8000
