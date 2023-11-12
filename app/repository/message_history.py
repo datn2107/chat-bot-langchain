@@ -10,15 +10,12 @@ from config import db
 class MessageHistoryRepository:
     db_session: Session = None
 
-
     def __init__(self):
         self.db_session = self.open_db_session()
-
 
     def open_db_session(self):
         db_session = next(db.get_db_session())
         return db_session
-
 
     def get_messages(
         self, user_email: str, skip: int = 0, limit: int = 10
@@ -32,6 +29,8 @@ class MessageHistoryRepository:
                 .limit(limit)
                 .all()
             )
+
+            return messages
         except Exception as e:
             logging.debug(
                 "Get Messages {email}: {exception}".format(
@@ -40,24 +39,21 @@ class MessageHistoryRepository:
             )
             raise e
 
-        return messages
-
-
     def clear_messages(self, user_email: str):
         try:
             self.db_session.query(MessageHistory).filter(
                 MessageHistory.user_email == user_email
             ).delete()
+
             self.db_session.commit()
         except Exception as e:
+            self.db_session.rollback()
             logging.debug(
                 "Clear Messages {email}: {exception}".format(
                     email=user_email, exception=str(e)
                 )
             )
-            self.db_session.rollback()
             raise e
-
 
     def get_last_k_messages(
         self, user_email: str, k: int = 10
@@ -70,6 +66,8 @@ class MessageHistoryRepository:
                 .limit(k)
                 .all()
             )
+
+            return messages
         except Exception as e:
             logging.debug(
                 "Get {k} Last Messages {email}: {exception}".format(
@@ -77,9 +75,6 @@ class MessageHistoryRepository:
                 )
             )
             raise e
-
-        return messages
-
 
     def add_message(
         self, user_mail: str, content: str, message_type: MessageType
@@ -91,8 +86,10 @@ class MessageHistoryRepository:
 
             self.db_session.add(message_history)
             self.db_session.commit()
+
             return message_history
         except Exception as e:
+            self.db_session.rollback()
             logging.debug(
                 "Add Message {email}|{message}|{message_type}: {exception}".format(
                     email=user_mail,
@@ -101,9 +98,7 @@ class MessageHistoryRepository:
                     exception=str(e),
                 )
             )
-            self.db_session.rollback()
             raise e
-
 
     def count_message_last_k_hours(self, user_email: str, k: int = 3) -> int:
         try:
@@ -115,6 +110,8 @@ class MessageHistoryRepository:
                 )
                 .count()
             )
+            
+            return count
         except Exception as e:
             logging.debug(
                 "Count Message Last 3 Hours {email}: {exception}".format(
@@ -122,8 +119,6 @@ class MessageHistoryRepository:
                 )
             )
             raise e
-
-        return count
 
 
 if __name__ == "__main__":
