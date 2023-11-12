@@ -14,7 +14,7 @@ from chat_bot import ChatBotFactory
 from dependencies import jwt_dependency
 from repository import messages_history_repository
 
-logging.basicConfig(filename="app.log", filemode="a", level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
 
 origins = os.getenv("ALLOWED_ORIGINS").split(",")

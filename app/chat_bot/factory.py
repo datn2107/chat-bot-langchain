@@ -13,7 +13,7 @@ class ChatBotFactory:
             if ChatBotFactory.free_chatbot is None:
                 ChatBotFactory.free_chatbot = ChatBotFree(debug=debug)
             return ChatBotFactory.free_chatbot
-        elif name == "Standard":
+        elif name == "Standard" or name == "Premium":
             if ChatBotFactory.standard_chatbot is None:
                 ChatBotFactory.standard_chatbot = ChatBotStandard(debug=debug)
             return ChatBotFactory.standard_chatbot
