@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 dotenv.load_dotenv()
 
 from models import MessageHistory
+from schemas import MessageSchema
 from chat_bot import ChatBotFactory
 from dependencies import jwt_dependency
 from repository import messages_history_repository
@@ -64,10 +65,11 @@ async def clear_message(user_email_type: Tuple[str, str] = jwt_dependency):
     return {"message": "Clear messages successfully"}
 
 
-@app.get("/messages/ask", status_code=status.HTTP_200_OK)
+@app.post("/messages/ask", status_code=status.HTTP_200_OK)
 async def ask_message(
-    message: str, user_email_type: Tuple[str, str] = jwt_dependency
+    message: MessageSchema, user_email_type: Tuple[str, str] = jwt_dependency
 ):
+    message = message.message
     user_email, user_type = user_email_type
 
     if user_type not in ["Free", "Standard", "Premium"]:
