@@ -15,6 +15,8 @@ pip install -r requirements.txt
 ## Usage
 
 Use uvicorn to run the app.
++ [Frontend] {https://github.com/HuuTri130401/exe-pro-tracking}
++ [Backend] {https://github.com/danialtien/ProTracking}
 
 ```bash
 uvicorn main:app --reload
@@ -56,6 +58,11 @@ EXTERNAL_SERVER_EMAIL=YOUR_EXTERNAL_SERVER_EMAIL
 EXTERNAL_SERVER_PASSWORD=YOUR_EXTERNAL_SERVER_PASSWORD
 EXTERNAL_SERVER_ACCOUNT_TYPE=YOUR_EXTERNAL_SERVER_ACCOUNT_TYPE
 ```
+
+## Protracking App
+
+Github:
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
