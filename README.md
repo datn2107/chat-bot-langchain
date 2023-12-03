@@ -20,6 +20,15 @@ Use uvicorn to run the app.
 uvicorn main:app --reload
 ```
 
+## Features
+
+- [x] User Authentication
+- [x] Chat Bot + Google Search
+
+## API Documentation
+
+The API documentation is available at `/docs`.
+
 ## Configuration
 
 Create a .env file in the root directory of the project and add the following variables.
@@ -46,7 +55,6 @@ EXTERNAL_SERVER_NAME=YOUR_EXTERNAL_SERVER_NAME
 EXTERNAL_SERVER_EMAIL=YOUR_EXTERNAL_SERVER_EMAIL
 EXTERNAL_SERVER_PASSWORD=YOUR_EXTERNAL_SERVER_PASSWORD
 EXTERNAL_SERVER_ACCOUNT_TYPE=YOUR_EXTERNAL_SERVER_ACCOUNT_TYPE
-
 ```
 
 ## Contributing
